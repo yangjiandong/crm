@@ -24,6 +24,14 @@ fat_free_crm
 
    jruby script/server
 
+   2. deploy to tomcat
+
+   edit Gemfile
+   bundle install --without=development test
+   bundle lock
+   rake war
+   --数据库采用 mysql
+
 
    --END
 
