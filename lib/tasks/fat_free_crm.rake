@@ -31,7 +31,7 @@ namespace :crm do
     desc "Load default application settings"
     task :load => :environment do
       plugin = ENV["PLUGIN"]
-      yaml = RAILS_ROOT + (plugin ? "/vendor/plugins/#{plugin}" : "") + "/config/settings.yml"
+      yaml = File.join(Rails.root, (plugin ? "/vendor/plugins/#{plugin}" : "") + "/config/settings.yml")
       begin
         settings = YAML.load_file(yaml)
       rescue
@@ -71,8 +71,8 @@ namespace :crm do
 
   desc "Prepare the database and load default application settings"
   task :setup => :environment do
-    proceed = true
-    if ActiveRecord::Migrator.current_version > 0
+    proceed = ENV["PROCEED"] == 'true'
+    if !proceed and ActiveRecord::Migrator.current_version > 0
       puts "\nYour database is about to be reset, so if you choose to proceed all the existing data will be lost.\n\n"
       loop do
         print "Continue [yes/no]: "
@@ -83,7 +83,11 @@ namespace :crm do
     end
     if proceed
       Rake::Task["db:migrate:reset"].invoke
-      Rake::Task["db:migrate:plugins"].invoke
+
+      # Migrating plugins is not part of Rails 3 yet, but it is coming. See
+      # https://rails.lighthouseapp.com/projects/8994/tickets/2058 for details.
+
+      # Rake::Task["db:migrate:plugins"].invoke
       Rake::Task["crm:settings:load"].invoke
       Rake::Task["crm:setup:admin"].invoke
     end

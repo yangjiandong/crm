@@ -1,23 +1,24 @@
 # Fat Free CRM
 # Copyright (C) 2008-2010 by Michael Dvorkin
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------------
 
 module ApplicationHelper
 
-  def tabs(tabs = FatFreeCRM::Tabs.main)
+  def tabs(tabs = nil)
+    tabs ||= controller_path =~ /admin/ ? FatFreeCRM::Tabs.admin : FatFreeCRM::Tabs.main
     if tabs
       @current_tab ||= tabs.first[:text] # Select first tab by default.
       tabs.each { |tab| tab[:active] = (@current_tab == tab[:text] || @current_tab == tab[:url][:controller]) }
@@ -25,7 +26,7 @@ module ApplicationHelper
       raise FatFreeCRM::MissingSettings, "Tab settings are missing, please run <b>rake crm:setup</b> command."
     end
   end
-  
+
   #----------------------------------------------------------------------------
   def tabless_layout?
     %w(authentications passwords).include?(controller.controller_name) ||
@@ -47,8 +48,8 @@ module ApplicationHelper
   #----------------------------------------------------------------------------
   def subtitle(id, hidden = true, text = id.to_s.split("_").last.capitalize)
     content_tag("div",
-      link_to_remote("<small>#{ hidden ? "&#9658;" : "&#9660;" }</small> #{text}",
-        :url => url_for(:controller => :home, :action => :toggle, :id => id),
+      link_to_remote("<small>#{ hidden ? "&#9658;" : "&#9660;" }</small> #{text}".html_safe,
+        :url    => url_for(:controller => :home, :action => :toggle, :id => id),
         :before => "crm.flip_subtitle(this)"
       ), :class => "subtitle")
   end
@@ -60,10 +61,10 @@ module ApplicationHelper
     select_id  = :"select_#{asset}"
     create_url = controller.send(:"new_#{asset}_path")
 
-    html = "<br />"
+    html = "<br />".html_safe
     html << content_tag(:div, link_to(t(select_id), "#", :id => select_id), :class => "subtitle_tools")
-    html << content_tag(:div, "&nbsp;|&nbsp;", :class => "subtitle_tools")
-    html << content_tag(:div, link_to_inline(create_id, create_url, :related => dom_id(related), :text=> t(create_id)), :class => "subtitle_tools")
+    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools")
+    html << content_tag(:div, link_to_inline(create_id, create_url, :related => dom_id(related), :text => t(create_id)), :class => "subtitle_tools")
     html << content_tag(:div, t(assets), :class => :subtitle, :id => :"create_#{asset}_title")
     html << content_tag(:div, "", :class => :remote, :id => create_id, :style => "display:none;")
   end
@@ -83,36 +84,36 @@ module ApplicationHelper
   def link_to_inline(id, url, options = {})
     text = options[:text] || id.to_s.titleize
     text = (arrow_for(id) + text) unless options[:plain]
-    related = (options[:related] ? ", related: '#{options[:related]}'" : "")
+    related = (options[:related] ? "+'&related=#{options[:related]}'" : '')
 
     link_to_remote(text,
       :url    => url,
       :method => :get,
-      :with   => "{ cancel: Element.visible('#{id}')#{related} }"
+      :with   => "'cancel='+Element.visible('#{id}')#{related}"
     )
   end
 
   #----------------------------------------------------------------------------
   def arrow_for(id)
-    content_tag(:span, "&#9658;", :id => "#{id}_arrow", :class => :arrow)
+    content_tag(:span, "&#9658;".html_safe, :id => "#{id}_arrow", :class => :arrow)
   end
 
   #----------------------------------------------------------------------------
-  def link_to_edit(model)
+  def link_to_edit(model, params = {})
     name = model.class.name.underscore.downcase
     link_to_remote(t(:edit),
+      :url    => params[:url] || send(:"edit_#{name}_path", model),
       :method => :get,
-      :url    => send("edit_#{name}_path", model),
-      :with   => "{ previous: crm.find_form('edit_#{name}') }"
+      :with   => "'previous='+crm.find_form('edit_#{name}')"
     )
   end
 
   #----------------------------------------------------------------------------
-  def link_to_delete(model)
+  def link_to_delete(model, params = {})
     name = model.class.name.underscore.downcase
     link_to_remote(t(:delete) + "!",
+      :url    => params[:url] || url_for(model),
       :method => :delete,
-      :url    => send("#{name}_path", model),
       :before => visual_effect(:highlight, dom_id(model), :startcolor => "#ffe4e1")
     )
   end
@@ -120,20 +121,24 @@ module ApplicationHelper
   #----------------------------------------------------------------------------
   def link_to_discard(model)
     name = model.class.name.downcase
-    current_url = (request.xhr? ? request.referer : request.request_uri)
+    current_url = (request.xhr? ? request.referer : request.fullpath)
     parent, parent_id = current_url.scan(%r|/(\w+)/(\d+)|).flatten
 
     link_to_remote(t(:discard),
-      :method => :post,
       :url    => url_for(:controller => parent, :action => :discard, :id => parent_id),
-      :with   => "{ attachment: '#{model.class.name}', attachment_id: #{model.id} }",
+      :method => :post,
+      :with   => "'attachment=#{model.class.name}&attachment_id=#{model.id}'",
       :before => visual_effect(:highlight, dom_id(model), :startcolor => "#ffe4e1")
     )
   end
 
   #----------------------------------------------------------------------------
-  def link_to_cancel(url)
-    link_to_remote(t(:cancel), :url => url, :method => :get, :with => "{ cancel: true }")
+  def link_to_cancel(url, params = {})
+    link_to_remote(t(:cancel),
+      :url    => params[:url] || url,
+      :method => :get,
+      :with   => "'cancel=true'"
+    )
   end
 
   #----------------------------------------------------------------------------
@@ -142,7 +147,7 @@ module ApplicationHelper
       :class => "close", :title => t(:close_form),
       :onmouseover => "this.style.background='lightsalmon'",
       :onmouseout => "this.style.background='lightblue'",
-      :onclick => remote_function(:url => url, :method => :get, :with => "{ cancel: true }")
+      :onclick => remote_function(:url => url, :method => :get, :with => "'cancel=true'")
     )
   end
 
@@ -164,7 +169,7 @@ module ApplicationHelper
     current = tabs.first unless tabs.include?(current)
     tabs.inject([]) do |html, tab|
       html << link_to_function(t("tab_#{tab}"), "crm.jumper('#{tab}')", :class => (tab == current ? 'selected' : ''))
-    end.join(" | ")
+    end.join(" | ").html_safe
   end
 
   #----------------------------------------------------------------------------
@@ -204,9 +209,9 @@ module ApplicationHelper
   end
 
   #----------------------------------------------------------------------------
-  def confirm_delete(model)
-    question = %(<span class="warn">#{t(:confirm_delete, model.class.to_s.downcase)}</span>)
-    yes = link_to(t(:yes_button), model, :method => :delete)
+  def confirm_delete(model, params = {})
+    question = %(<span class="warn">#{t(:confirm_delete, model.class.to_s.downcase)}</span>).html_safe
+    yes = link_to(t(:yes_button), params[:url] || model, :method => :delete)
     no = link_to_function(t(:no_button), "$('menu').update($('confirm').innerHTML)")
     update_page do |page|
       page << "$('confirm').update($('menu').innerHTML)"
@@ -241,10 +246,10 @@ module ApplicationHelper
       url = person.send(site)
       unless url.blank?
         url = "http://" << url unless url.match(/^https?:\/\//)
-        links << link_to(image_tag("#{site}.gif", :size => "15x15"), url, :popup => true, :title => t(:open_in_window, url))
+        links << link_to(image_tag("#{site}.gif", :size => "15x15"), url, :"data-popup" => true, :title => t(:open_in_window, url))
       end
       links
-    end.join("\n")
+    end.join("\n").html_safe
   end
 
   # Ajax helper to refresh current index page once the user selects an option.
@@ -255,7 +260,7 @@ module ApplicationHelper
     end
     remote_function(
       :url       => url || send("redraw_#{controller.controller_name}_path"),
-      :with      => "{ #{option}: '#{param || value}' }",
+      :with      => "'#{option}=#{param || value}'",
       :condition => "$('#{option}').innerHTML != '#{value}'",
       :loading   => "$('#{option}').update('#{value}'); $('loading').show()",
       :complete  => "$('loading').hide()"
@@ -268,7 +273,7 @@ module ApplicationHelper
     "{ name: \"#{name.titleize}\", on_select: function() {" +
     remote_function(
       :url       => url || send("redraw_#{controller.controller_name}_path"),
-      :with      => "{ #{option}: '#{key}' }",
+      :with      => "'#{option}=#{key}'",
       :condition => "$('#{option}').innerHTML != '#{name}'",
       :loading   => "$('#{option}').update('#{name}'); $('loading').show()",
       :complete  => "$('loading').hide()"
@@ -280,8 +285,8 @@ module ApplicationHelper
   def get_browser_timezone_offset
     unless session[:timezone_offset]
       remote_function(
-        :url  => url_for(:controller => :home, :action => :timezone),
-        :with => "{ offset: (new Date()).getTimezoneOffset() }"
+        :url  => timezone_path,
+        :with => "'offset='+(new Date()).getTimezoneOffset()"
       )
     end
   end
@@ -299,22 +304,21 @@ module ApplicationHelper
   # gravatar. For leads and contacts we always use gravatars.
   #----------------------------------------------------------------------------
   def avatar_for(model, args = {})
-    args[:size]  ||= "75x75"
-    args[:class] ||= "gravatar"
+    args = { :class => 'gravatar', :size => '75x75' }.merge(args)
     if model.avatar
       image_tag(model.avatar.image.url(Avatar.styles[args[:size]]), args)
     elsif model.email
-      gravatar(model.email, { :default => default_avatar_url }.merge(args))
+      gravatar_image_tag(model.email, { :gravatar => { :default => default_avatar_url } }.merge(args))
     else
       image_tag("avatar.jpg", args)
     end
   end
 
-  # Add default avatar image and invoke original :gravatar_for defined by the
-  # gravatar plugin (see vendor/plugins/gravatar/lib/gravatar.rb)
+  # Gravatar helper that adds default CSS class and image URL.
   #----------------------------------------------------------------------------
   def gravatar_for(model, args = {})
-    super(model, { :default => default_avatar_url }.merge(args))
+    args = { :class => 'gravatar', :gravatar => { :default => default_avatar_url } }.merge(args)
+    gravatar_image_tag(model.email, args)
   end
 
   #----------------------------------------------------------------------------
@@ -331,7 +335,7 @@ module ApplicationHelper
       when "Shared"  then t(:permissions_intro_shared,  text)
     end
   end
-  
+
   # Returns default permissions intro
   #----------------------------------------------------------------------------
   def get_default_permissions_intro(access, text)
@@ -340,7 +344,7 @@ module ApplicationHelper
       when "Public" then t(:permissions_intro_public, text)
       when "Shared" then t(:permissions_intro_shared, text)
     end
-  end  
+  end
 
   # Render a text field that is part of compound address.
   #----------------------------------------------------------------------------
@@ -371,7 +375,7 @@ module ApplicationHelper
   #----------------------------------------------------------------------------
   def shown_on_landing_page?
     !!((request.xhr? && request.referer =~ %r|/\w+/\d+|) ||
-       (!request.xhr? && request.request_uri =~ %r|/\w+/\d+|))
+       (!request.xhr? && request.fullpath =~ %r|/\w+/\d+|))
   end
 
 end

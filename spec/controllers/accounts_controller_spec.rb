@@ -92,7 +92,8 @@ describe AccountsController do
 
     describe "account got deleted or otherwise unavailable" do
       it "should redirect to account index if the account got deleted" do
-        @account = Factory(:account, :user => @current_user).destroy
+        @account = Factory(:account, :user => @current_user)
+        @account.destroy
 
         get :show, :id => @account.id
         flash[:warning].should_not == nil
@@ -108,7 +109,8 @@ describe AccountsController do
       end
 
       it "should return 404 (Not Found) XML error" do
-        @account = Factory(:account, :user => @current_user).destroy
+        @account = Factory(:account, :user => @current_user)
+        @account.destroy
         request.env["HTTP_ACCEPT"] = "application/xml"
 
         get :show, :id => @account.id
@@ -168,7 +170,8 @@ describe AccountsController do
 
     describe "(account got deleted or is otherwise unavailable)" do
       it "should reload current page with the flash message if the account got deleted" do
-        @account = Factory(:account, :user => @current_user).destroy
+        @account = Factory(:account, :user => @current_user)
+        @account.destroy
 
         xhr :get, :edit, :id => @account.id
         flash[:warning].should_not == nil
@@ -252,14 +255,14 @@ describe AccountsController do
         response.should render_template("accounts/create")
       end
     end
-  
+
   end
 
   # PUT /accounts/1
   # PUT /accounts/1.xml                                                    AJAX
   #----------------------------------------------------------------------------
   describe "responding to PUT udpate" do
-  
+
     describe "with valid params" do
       it "should update the requested account, expose the requested account as @account, and render [update] template" do
         @account = Factory(:account, :id => 42, :name => "Hello people")
@@ -283,7 +286,8 @@ describe AccountsController do
 
       describe "account got deleted or otherwise unavailable" do
         it "should reload current page is the account got deleted" do
-          @account = Factory(:account, :user => @current_user).destroy
+          @account = Factory(:account, :user => @current_user)
+          @account.destroy
 
           xhr :put, :update, :id => @account.id
           flash[:warning].should_not == nil
@@ -299,7 +303,7 @@ describe AccountsController do
         end
       end
     end
-  
+
     describe "with invalid params" do
       it "should not update the requested account but still expose the requested account as @account, and render [update] template" do
         @account = Factory(:account, :id => 42, :name => "Hello people")
@@ -312,7 +316,7 @@ describe AccountsController do
     end
 
   end
-  
+
   # DELETE /accounts/1
   # DELETE /accounts/1.xml
   #----------------------------------------------------------------------------
@@ -326,7 +330,7 @@ describe AccountsController do
         @another_account = Factory(:account, :user => @current_user)
         xhr :delete, :destroy, :id => @account.id
 
-        lambda { @account.reload }.should raise_error(ActiveRecord::RecordNotFound)
+        lambda { Account.find(@account) }.should raise_error(ActiveRecord::RecordNotFound)
         assigns[:accounts].should == [ @another_account ] # @account got deleted
         response.should render_template("accounts/destroy")
       end
@@ -349,7 +353,8 @@ describe AccountsController do
 
       describe "account got deleted or otherwise unavailable" do
         it "should reload current page is the account got deleted" do
-          @account = Factory(:account, :user => @current_user).destroy
+          @account = Factory(:account, :user => @current_user)
+          @account.destroy
 
           xhr :delete, :destroy, :id => @account.id
           flash[:warning].should_not == nil
@@ -375,7 +380,8 @@ describe AccountsController do
       end
 
       it "should redirect to account index with the flash message is the account got deleted" do
-        @account = Factory(:account, :user => @current_user).destroy
+        @account = Factory(:account, :user => @current_user)
+        @account.destroy
 
         delete :destroy, :id => @account.id
         flash[:warning].should_not == nil
@@ -510,7 +516,7 @@ describe AccountsController do
   describe "responding to POST redraw" do
     it "should save user selected account preference" do
       xhr :post, :redraw, :per_page => 42, :outline => "brief", :sort_by => "name"
-      @current_user.preference[:accounts_per_page].should == "42"
+      @current_user.preference[:accounts_per_page].should == 42
       @current_user.preference[:accounts_outline].should  == "brief"
       @current_user.preference[:accounts_sort_by].should  == "accounts.name ASC"
     end

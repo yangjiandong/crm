@@ -8,6 +8,18 @@ fat_free_crm
    git branch ror.2.3.8
    git push origin ror.2.3.8
 
+
+   2. use rails 3.0.1 use jdbcsqlite3
+
+   rake db:create
+   rake db:migrate
+   --rake crm:setup
+   --Loading demo data
+   rake crm:demo:load
+
+   3. use rails3
+   undefined method add_observer for Rake::Task:Class (NoMethodError)
+
 2010.11.05
 -----------
 

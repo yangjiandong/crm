@@ -1,16 +1,16 @@
 # Fat Free CRM
 # Copyright (C) 2008-2010 by Michael Dvorkin
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------------
@@ -20,7 +20,6 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :can_signup?
   helper_method :called_from_index_page?, :called_from_landing_page?
 
-  filter_parameter_logging :password, :password_confirmation
   before_filter :set_context
   before_filter "hook(:app_before_filter, self)"
   after_filter "hook(:app_after_filter, self)"
@@ -29,7 +28,55 @@ class ApplicationController < ActionController::Base
   # Uncomment the :secret if you're not using the cookie session store
   # protect_from_forgery # :secret => '165eb65bfdacf95923dad9aea10cc64a'
 
-  private
+  # Common auto_complete handler for all core controllers.
+  #----------------------------------------------------------------------------
+  def auto_complete
+    @query = params[:auto_complete_query]
+    @auto_complete = hook(:auto_complete, self, :query => @query, :user => @current_user)
+    if @auto_complete.empty?
+      @auto_complete = controller_name.classify.constantize.my(:user => @current_user, :limit => 10).search(@query)
+    else
+      @auto_complete = @auto_complete.last
+    end
+    session[:auto_complete] = controller_name.to_sym
+    render :template => "common/auto_complete", :layout => nil
+  end
+
+  # Common attach handler for all core controllers.
+  #----------------------------------------------------------------------------
+  def attach
+    model = controller_name.classify.constantize.my(@current_user).find(params[:id])
+    @attachment = params[:assets].classify.constantize.find(params[:asset_id])
+    @attached = model.attach!(@attachment)
+    @campaign = model.reload if model.is_a?(Campaign)
+
+    respond_to do |format|
+      format.js  { render :template => "common/attach" }
+      format.xml { render :xml => model.reload.to_xml }
+    end
+
+  rescue ActiveRecord::RecordNotFound
+    respond_to_not_found(:html, :js, :xml)
+  end
+
+  # Common discard handler for all core controllers.
+  #----------------------------------------------------------------------------
+  def discard
+    model = controller_name.classify.constantize.my(@current_user).find(params[:id])
+    @attachment = params[:attachment].constantize.find(params[:attachment_id])
+    model.discard!(@attachment)
+    @campaign = model.reload if model.is_a?(Campaign)
+
+    respond_to do |format|
+      format.js  { render :template => "common/discard" }
+      format.xml { render :xml => model.reload.to_xml }
+    end
+
+  rescue ActiveRecord::RecordNotFound
+    respond_to_not_found(:html, :js, :xml)
+  end
+
+private
   #----------------------------------------------------------------------------
   def set_context
     ActiveSupport::TimeZone[session[:timezone_offset]] if session[:timezone_offset]
@@ -59,7 +106,7 @@ class ApplicationController < ActionController::Base
     end
     @current_user_session
   end
-  
+
   #----------------------------------------------------------------------------
   def current_user
     @current_user ||= (current_user_session && current_user_session.record)
@@ -68,12 +115,12 @@ class ApplicationController < ActionController::Base
     end
     User.current_user = @current_user
   end
-  
+
   #----------------------------------------------------------------------------
   def require_user
     unless current_user
       store_location
-      flash[:notice] = t(:msg_login_needed) if request.request_uri != "/"
+      flash[:notice] = t(:msg_login_needed) if request.fullpath != "/"
       redirect_to login_url
       false
     end
@@ -88,12 +135,12 @@ class ApplicationController < ActionController::Base
       false
     end
   end
-  
+
   #----------------------------------------------------------------------------
   def store_location
-    session[:return_to] = request.request_uri
+    session[:return_to] = request.fullpath
   end
-  
+
   #----------------------------------------------------------------------------
   def redirect_back_or_default(default)
     redirect_to(session[:return_to] || default)
@@ -158,54 +205,6 @@ class ApplicationController < ActionController::Base
       format.js   { render(:update) { |page| page.redirect_to(url) } }       if types.include?(:js)
       format.xml  { render :text => flash[:warning], :status => :not_found } if types.include?(:xml)
     end
-  end
-
-  # Common auto_complete handler for all core controllers.
-  #----------------------------------------------------------------------------
-  def auto_complete
-    @query = params[:auto_complete_query]
-    @auto_complete = hook(:auto_complete, self, :query => @query, :user => @current_user)
-    if @auto_complete.empty?
-      @auto_complete = controller_name.classify.constantize.my(:user => @current_user, :limit => 10).search(@query)
-    else
-      @auto_complete = @auto_complete.last
-    end
-    session[:auto_complete] = controller_name.to_sym
-    render :template => "common/auto_complete", :layout => nil
-  end
-
-  # Common attach handler for all core controllers.
-  #----------------------------------------------------------------------------
-  def attach
-    model = controller_name.classify.constantize.my(@current_user).find(params[:id])
-    @attachment = params[:assets].classify.constantize.find(params[:asset_id])
-    @attached = model.attach!(@attachment)
-    @campaign = model.reload if model.is_a?(Campaign)
-
-    respond_to do |format|
-      format.js  { render :template => "common/attach" }
-      format.xml { render :xml => model.reload.to_xml }
-    end
-
-  rescue ActiveRecord::RecordNotFound
-    respond_to_not_found(:html, :js, :xml)
-  end
-
-  # Common discard handler for all core controllers.
-  #----------------------------------------------------------------------------
-  def discard
-    model = controller_name.classify.constantize.my(@current_user).find(params[:id])
-    @attachment = params[:attachment].constantize.find(params[:attachment_id])
-    model.discard!(@attachment)
-    @campaign = model.reload if model.is_a?(Campaign)
-
-    respond_to do |format|
-      format.js  { render :template => "common/discard" }
-      format.xml { render :xml => model.reload.to_xml }
-    end
-
-  rescue ActiveRecord::RecordNotFound
-    respond_to_not_found(:html, :js, :xml)
   end
 
   # Proxy current page for any of the controllers by storing it in a session.

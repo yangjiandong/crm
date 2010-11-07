@@ -1,16 +1,16 @@
 # Fat Free CRM
 # Copyright (C) 2008-2010 by Michael Dvorkin
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #------------------------------------------------------------------------------
@@ -20,9 +20,7 @@ class OpportunitiesController < ApplicationController
   before_filter :set_current_tab, :only => [ :index, :show ]
   before_filter :load_settings
   before_filter :get_data_for_sidebar, :only => :index
-  before_filter :attach, :only => :attach
-  before_filter :discard, :only => :discard
-  before_filter :auto_complete, :only => :auto_complete
+  before_filter :set_params, :only => [:index, :redraw, :filter]
   after_filter  :update_recently_viewed, :only => :show
 
   # GET /opportunities
@@ -46,7 +44,7 @@ class OpportunitiesController < ApplicationController
     @comment = Comment.new
 
     @timeline = Timeline.find(@opportunity)
-    
+
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @opportunity }
@@ -85,7 +83,7 @@ class OpportunitiesController < ApplicationController
     @users = User.except(@current_user).all
     @account  = @opportunity.account || Account.new(:user => @current_user)
     @accounts = Account.my(@current_user).all(:order => "name")
-    if params[:previous] =~ /(\d+)\z/
+    if params[:previous].to_s =~ /(\d+)\z/
       @previous = Opportunity.my(@current_user).find($1)
     end
 
@@ -182,18 +180,18 @@ class OpportunitiesController < ApplicationController
   # PUT /opportunities/1/attach
   # PUT /opportunities/1/attach.xml                                        AJAX
   #----------------------------------------------------------------------------
-  # Handled by before_filter :attach, :only => :attach
+  # Handled by ApplicationController :attach
 
   # POST /opportunities/1/discard
   # POST /opportunities/1/discard.xml                                      AJAX
   #----------------------------------------------------------------------------
-  # Handled by before_filter :discard, :only => :discard
+  # Handled by ApplicationController :discard
 
   # POST /opportunities/auto_complete/query                                AJAX
   #----------------------------------------------------------------------------
-  # Handled by before_filter :auto_complete, :only => :auto_complete
+  # Handled by ApplicationController :auto_complete
 
-  # GET /campaigns/search/query                                           AJAX
+  # GET /opportunities/search/query                                        AJAX
   #----------------------------------------------------------------------------
   def search
     @opportunities = get_opportunities(:query => params[:query], :page => 1)
@@ -217,9 +215,6 @@ class OpportunitiesController < ApplicationController
   # POST /opportunities/redraw                                             AJAX
   #----------------------------------------------------------------------------
   def redraw
-    @current_user.pref[:opportunities_per_page] = params[:per_page] if params[:per_page]
-    @current_user.pref[:opportunities_outline]  = params[:outline]  if params[:outline]
-    @current_user.pref[:opportunities_sort_by]  = Opportunity::sort_by_map[params[:sort_by]] if params[:sort_by]
     @opportunities = get_opportunities(:page => 1)
     render :action => :index
   end
@@ -227,7 +222,6 @@ class OpportunitiesController < ApplicationController
   # POST /opportunities/filter                                             AJAX
   #----------------------------------------------------------------------------
   def filter
-    session[:filter_by_opportunity_stage] = params[:stage]
     @opportunities = get_opportunities(:page => 1)
     render :action => :index
   end
@@ -254,7 +248,7 @@ class OpportunitiesController < ApplicationController
     # Default processing if no :get_opportunities hooks are present.
     if session[:filter_by_opportunity_stage]
       filtered = session[:filter_by_opportunity_stage].split(",")
-      current_query.blank? ? Opportunity.my(records).only(filtered) : Opportunity.my(records).only(filtered).search(current_query)
+      current_query.blank? ? Opportunity.my(records).state(filtered) : Opportunity.my(records).state(filtered).search(current_query)
     else
       current_query.blank? ? Opportunity.my(records) : Opportunity.my(records).search(current_query)
     end.paginate(pages)
@@ -289,7 +283,7 @@ class OpportunitiesController < ApplicationController
     else
       @opportunity_stage_total = { :all => Opportunity.my(@current_user).count, :other => 0 }
       @stage.each do |value, key|
-        @opportunity_stage_total[key] = Opportunity.my(@current_user).count(:conditions => [ "stage=?", key.to_s ])
+        @opportunity_stage_total[key] = Opportunity.my(@current_user).where(:stage => key.to_s).count
         @opportunity_stage_total[:other] -= @opportunity_stage_total[key]
       end
       @opportunity_stage_total[:other] += @opportunity_stage_total[:all]
@@ -299,6 +293,13 @@ class OpportunitiesController < ApplicationController
   #----------------------------------------------------------------------------
   def load_settings
     @stage = Setting.unroll(:opportunity_stage)
+  end
+
+  def set_params
+    @current_user.pref[:opportunities_per_page] = params[:per_page] if params[:per_page]
+    @current_user.pref[:opportunities_outline]  = params[:outline]  if params[:outline]
+    @current_user.pref[:opportunities_sort_by]  = Opportunity::sort_by_map[params[:sort_by]] if params[:sort_by]
+    session[:filter_by_opportunity_stage] = params[:stage] if params[:stage]
   end
 
 end

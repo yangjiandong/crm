@@ -10,14 +10,14 @@ describe "admin/users/index.js.rjs" do
   it "renders [admin/user] template with @users collection" do
     amy = Factory(:user)
     bob = Factory(:user)
-    assigns[:users] = [ amy, bob ].paginate
+    assign(:users, [ amy, bob ].paginate)
 
-    render "admin/users/index.js.rjs"
-    response.should have_rjs("users") do |rjs|
+    render
+    rendered.should have_rjs("users") do |rjs|
       with_tag("li[id=user_#{amy.id}]")
       with_tag("li[id=user_#{bob.id}]")
     end
-    response.should have_rjs("paginate")
+    rendered.should have_rjs("paginate")
   end
 
 end

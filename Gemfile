@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '2.3.8'
+gem 'rails', '3.0.1'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -17,27 +17,46 @@ if defined?(JRUBY_VERSION)
     gem 'warbler'
 else
     gem 'sqlite3-ruby', :require => 'sqlite3'
+    gem 'mysql2',               '>= 0.2.4'
 end
 
-# Use unicorn as the web server
-# gem 'unicorn'
+gem 'acts_as_commentable',  '>= 3.0.0'
+gem 'authlogic',            '>= 2.1.6', :path => File.join(File.dirname(__FILE__), 'vendor', 'gems', 'authlogic')
+gem 'haml',                 '>= 3.0.21'
 
-# Deploy with Capistrano
-# gem 'capistrano'
+gem 'paperclip',            '>= 2.3.3'
+gem 'simple_column_search', '>= 1.1.0'
+gem 'will_paginate',        '>= 3.0.pre2'
 
-# To use debugger
-# gem 'ruby-debug'
+group :development do
+  gem 'annotate',           '>= 2.4.0'
+  gem 'awesome_print',      '>= 0.2.1'
+  gem 'ffaker',             '>= 0.4.0' # Fast Faker for `rake crm:demo:load`
+end
 
-# Bundle the extra gems:
-# gem 'bj'
-# gem 'nokogiri'
-# gem 'sqlite3-ruby', :require => 'sqlite3'
-# gem 'aws-s3', :require => 'aws/s3'
+group :test do
+  gem 'test-unit', '1.2.3' if RUBY_VERSION.to_f >= 1.9
+  gem 'factory_girl',       '>= 1.3.2'
+  gem 'ffaker',             '>= 0.4.0'
+  gem "rspec-rails",        '>= 2.0.1'
+  gem "rspec",              '>= 2.0.1'
+  gem "rspec-core",         '>= 2.0.1'
+  gem "rspec-expectations", '>= 2.0.1'
+  gem "rspec-mocks",        '>= 2.0.1'
+end
 
-# Bundle gems for the local environment. Make sure to
-# put test-only gems in this group so their generators
-# and rake tasks are available in development mode:
-# group :development, :test do
-#   gem 'webrat'
-# end
+# Gem watch list:
+#---------------------------------------------------------------------
+# gem 'authlogic',         :git => 'git://github.com/crossroads/authlogic.git', :branch => 'rails3'
+# gem 'gravatar-ultimate', :git => 'git://github.com/crossroads/gravatar.git'
+# gem 'paperclip',         :git => 'http://github.com/thoughtbot/paperclip.git'
 
+# Rails3 plugins that we use and their source repositories:
+#---------------------------------------------------------------------
+# gravatar_image_tag,      git://github.com/mdeering/gravatar_image_tag.git
+# calendar_date_select,    git://github.com/timcharper/calendar_date_select.git
+# country_select,          git://github.com/rails/country_select.git
+# dynamic_form,            git://github.com/rails/dynamic_form.git
+# is_paranoid,             git://github.com/theshortcut/is_paranoid.git
+# prototype_legacy_helper, git://github.com/rails/prototype_legacy_helper.git
+# responds_to_parent,      git://github.com/markcatley/responds_to_parent.git

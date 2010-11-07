@@ -16,7 +16,7 @@ describe AuthenticationsController do
           delete :destroy
           flash[:notice].should_not == nil
           flash[:notice].should =~ /^You must be logged in/
-          response.should redirect_to(login_url)
+          response.should redirect_to(login_path)
         end
       end
     end
@@ -32,7 +32,7 @@ describe AuthenticationsController do
           get :new
           flash[:notice].should_not == nil
           flash[:notice].should =~ /^You must be logged out/
-          response.should redirect_to(profile_url)
+          response.should redirect_to(profile_path)
         end
       end
 
@@ -41,7 +41,7 @@ describe AuthenticationsController do
           post :create, :authentication => @login
           flash[:notice].should_not == nil
           flash[:notice].should =~ /^You must be logged out/
-          response.should redirect_to(profile_url)
+          response.should redirect_to(profile_path)
         end
       end
     end
@@ -53,7 +53,7 @@ describe AuthenticationsController do
   describe "POST authentications" do
     before(:each) do
       @login = { :username => "user", :password => "pass", :remember_me => "0" }
-      @authentication = mock_model(Authentication, @login)
+      @authentication = mock(Authentication, @login)
     end
 
     describe "successful authentication " do
@@ -69,7 +69,7 @@ describe AuthenticationsController do
         post :create, :authentication => @login
         flash[:notice].should_not == nil
         flash[:notice].should_not =~ /last login/
-        response.should redirect_to(root_url)
+        response.should redirect_to(root_path)
       end
 
       it "displays last login time if it's not the first login" do
@@ -78,7 +78,7 @@ describe AuthenticationsController do
 
         post :create, :authentication => @login
         flash[:notice].should =~ /last login/
-        response.should redirect_to(root_url)
+        response.should redirect_to(root_path)
       end
     end
 
@@ -139,3 +139,4 @@ describe AuthenticationsController do
   end # POST authenticate
 
 end
+
