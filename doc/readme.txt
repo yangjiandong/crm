@@ -1,6 +1,13 @@
 fat_free_crm
 ==============
 
+2010.11.07
+-----------
+
+   1. 建立branch ror.2.3.8
+   git branch ror.2.3.8
+   git push origin ror.2.3.8
+
 2010.11.05
 -----------
 
