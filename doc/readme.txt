@@ -8,6 +8,7 @@ fat_free_crm
    git branch ror.2.3.8
    git push origin ror.2.3.8
 
+   git co -b ror.2.3.8 origin/ror.2.3.8
 
    2. use rails 3.0.1 use jdbcsqlite3
 
