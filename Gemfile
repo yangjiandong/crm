@@ -41,3 +41,4 @@ end
 #   gem 'webrat'
 # end
 
+gem 'yaml_db'

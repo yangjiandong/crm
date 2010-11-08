@@ -40,6 +40,7 @@ GEM
       jruby-rack (>= 1.0.0)
       rake (>= 0.8.7)
       rubyzip (>= 0.9.4)
+    yaml_db (0.2.0)
 
 PLATFORMS
   java
@@ -52,3 +53,4 @@ DEPENDENCIES
   jruby-rack
   rails (= 2.3.8)
   warbler
+  yaml_db
