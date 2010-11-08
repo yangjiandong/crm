@@ -1,6 +1,12 @@
 fat_free_crm
 ==============
 
+2010.11.08
+-----------
+
+   1. plugin haml
+   http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html
+
 2010.11.05
 -----------
 
