@@ -45,6 +45,9 @@ group :test do
   gem "rspec-mocks",        '>= 2.0.1'
 end
 
+# https://github.com/ludicast/yaml_db
+gem 'yaml_db'
+
 # Gem watch list:
 #---------------------------------------------------------------------
 # gem 'authlogic',         :git => 'git://github.com/crossroads/authlogic.git', :branch => 'rails3'

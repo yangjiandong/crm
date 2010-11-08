@@ -114,6 +114,7 @@ GEM
       rake (>= 0.8.7)
       rubyzip (>= 0.9.4)
     will_paginate (3.0.pre2)
+    yaml_db (0.2.0)
 
 PLATFORMS
   java
@@ -141,3 +142,4 @@ DEPENDENCIES
   simple_column_search (>= 1.1.0)
   warbler
   will_paginate (>= 3.0.pre2)
+  yaml_db

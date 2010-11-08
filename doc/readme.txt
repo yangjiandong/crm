@@ -1,6 +1,22 @@
 fat_free_crm
 ==============
 
+2010.11.08
+-----------
+
+   1. add yaml_db
+   Gemfile add:
+      gem 'yaml_db'
+
+   bundle unlock
+   bundle install
+   bundle lock
+
+   --dump data,default db/data.yml
+   jrake db:dump 
+   --load data
+   jrake db:load
+
 2010.11.07
 -----------
 
