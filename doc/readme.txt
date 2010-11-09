@@ -7,6 +7,10 @@ fat_free_crm
    1. plugin haml
    http://haml-lang.com/docs/yardoc/file.HAML_REFERENCE.html
 
+   2. 建立branch mvn.ror.2.3.8
+   git branch mvn.ror.2.3.8
+   git push origin mvn.ror.2.3.8
+
 2010.11.05
 -----------
 
