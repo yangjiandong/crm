@@ -1,0 +1,12 @@
+config/database.yml
+coverage/*
+db/schema.rb
+db/data.yml
+db/*.sql*
+log/*.log
+tmp/**/*
+.DS_Store
+*~
+*.swp
+vendor/plugins/crm_*
+m.bat

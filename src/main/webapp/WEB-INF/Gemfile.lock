@@ -1,0 +1,56 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    actionmailer (2.3.8)
+      actionpack (= 2.3.8)
+    actionpack (2.3.8)
+      activesupport (= 2.3.8)
+      rack (~> 1.1.0)
+    activerecord (2.3.8)
+      activesupport (= 2.3.8)
+    activerecord-jdbc-adapter (1.0.2-java)
+    activerecord-jdbcmysql-adapter (1.0.2-java)
+      activerecord-jdbc-adapter (= 1.0.2)
+      jdbc-mysql (~> 5.0.0)
+    activerecord-jdbcsqlite3-adapter (1.0.2-java)
+      activerecord-jdbc-adapter (= 1.0.2)
+      jdbc-sqlite3 (~> 3.6.0)
+    activeresource (2.3.8)
+      activesupport (= 2.3.8)
+    activesupport (2.3.8)
+    bouncy-castle-java (1.5.0145.2)
+    jdbc-mysql (5.0.4)
+    jdbc-sqlite3 (3.6.14.2.056-java)
+    jruby-jars (1.5.3)
+    jruby-openssl (0.7.2)
+      bouncy-castle-java
+    jruby-rack (1.0.3)
+    rack (1.1.0)
+    rails (2.3.8)
+      actionmailer (= 2.3.8)
+      actionpack (= 2.3.8)
+      activerecord (= 2.3.8)
+      activeresource (= 2.3.8)
+      activesupport (= 2.3.8)
+      rake (>= 0.8.3)
+    rake (0.8.7)
+    rubyzip (0.9.4)
+    warbler (1.2.1)
+      jruby-jars (>= 1.4.0)
+      jruby-rack (>= 1.0.0)
+      rake (>= 0.8.7)
+      rubyzip (>= 0.9.4)
+    yaml_db (0.2.0)
+
+PLATFORMS
+  java
+
+DEPENDENCIES
+  activerecord-jdbc-adapter
+  activerecord-jdbcmysql-adapter
+  activerecord-jdbcsqlite3-adapter
+  jruby-openssl
+  jruby-rack
+  rails (= 2.3.8)
+  warbler
+  yaml_db
