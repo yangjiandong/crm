@@ -11,6 +11,11 @@ fat_free_crm
    git branch mvn.ror.2.3.8
    git push origin mvn.ror.2.3.8
 
+   3. 建立sill-1.0
+
+   cd parent
+   mvn install
+
 2010.11.05
 -----------
 

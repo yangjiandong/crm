@@ -4,57 +4,17 @@
   <parent>
     <groupId>org.app.jruby</groupId>
     <artifactId>sill</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
   </parent>
-  <artifactId>sill-server</artifactId>
+  <artifactId>jcrm</artifactId>
   <packaging>war</packaging>
-  <name>Sill :: Server</name>
+  <name>Sill :: CRM</name>
 
   <dependencies>
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-channel</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-colorizer</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-deprecated</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-update-center-common</artifactId>
-      <version>0.3-SNAPSHOT</version>
-    </dependency>
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbyclient</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-plugin-api</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.maven.shared</groupId>
-          <artifactId>maven-dependency-tree</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.maven.shared</groupId>
-          <artifactId>maven-common-artifact-filters</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-configuration</groupId>
@@ -87,10 +47,6 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.picocontainer</groupId>
-      <artifactId>picocontainer</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
@@ -127,14 +83,6 @@
       <artifactId>logback-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-ehcache</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jruby.rack</groupId>
       <artifactId>jruby-rack</artifactId>
     </dependency>
@@ -145,12 +93,6 @@
     </dependency>
 
     <!-- unit tests -->
-    <dependency>
-      <groupId>org.app.jruby</groupId>
-      <artifactId>sill-testing-harness</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -194,17 +136,7 @@
             <goals>
               <goal>unpack</goal>
             </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.app.jruby</groupId>
-                  <artifactId>sill-colorizer</artifactId>
-                  <version>${project.version}</version>
-                  <outputDirectory>${basedir}/src/main/webapp/stylesheets</outputDirectory>
-                  <includes>**/sonar-colorizer.css</includes>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
+
           </execution>
         </executions>
       </plugin>
@@ -230,8 +162,11 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- 压缩所需js，合成为 sonar.js -->
+      <!--
       <plugin>
-        <!-- 压缩所需js，合成为 sonar.js -->
+
         <groupId>net.sf.alchim</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
         <version>0.7.1</version>
@@ -278,27 +213,8 @@
           </excludes>
         </configuration>
       </plugin>
-      <!--
-        <plugin>
-          <groupId>org.codehaus.sonar</groupId>
-          <artifactId>sonar-dev-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>trim</id>
-              <phase>process-resources</phase>
-              <goals>
-                <goal>trim</goal>
-              </goals>
-              <configuration>
-                <directory>${project.build.directory}/${project.build.finalName}</directory>
-                <includes>
-                  <include>**/*.erb</include>
-                </includes>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        -->
+      -->
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -458,62 +374,6 @@
                 <scope>provided</scope>
               </dependency>
           -->
-      </dependencies>
-    </profile>
-
-    <profile>
-      <id>postgresql</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${basedir}/src/dev/postgresql</directory>
-                      <filtering>false</filtering>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-jdbc-driver</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>copy-dependencies</goal>
-                </goals>
-                <configuration>
-                  <overWriteIfNewer>true</overWriteIfNewer>
-                  <overWriteReleases>true</overWriteReleases>
-                  <includeGroupIds>postgresql</includeGroupIds>
-                  <includeArtifactIds>postgresql</includeArtifactIds>
-                  <outputDirectory>${project.build.directory}/sonar-dev-home/extensions/jdbc-driver/postgresql/
-                  </outputDirectory>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <dependencies>
-        <dependency>
-          <groupId>postgresql</groupId>
-          <artifactId>postgresql</artifactId>
-        </dependency>
       </dependencies>
     </profile>
 

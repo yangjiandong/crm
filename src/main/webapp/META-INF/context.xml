@@ -1,0 +1,17 @@
+<Context antiJARLocking="true">
+    <ResourceLink
+        name="jdbc/database"
+        global="jdbc/database"
+        type="javax.sql.DataSource"
+        maxWait="1000"
+        removeAbandoned="true"
+        maxActive="30"
+        maxIdle="10"
+        removeAbandonedTimeout="60"
+        logAbandoned="true"
+        username="root"
+        password=""
+        driverClassName="com.mysql.jdbc.Driver"
+        url="jdbc:mysql://127.0.0.1:3306/fat_free_crm_development?autoReconnect=true"
+        />
+</Context>
