@@ -35,6 +35,7 @@ GEM
       rake (>= 0.8.3)
     rake (0.8.7)
     rubyzip (0.9.4)
+    uuidtools (2.1.1)
     warbler (1.2.1)
       jruby-jars (>= 1.4.0)
       jruby-rack (>= 1.0.0)
@@ -52,5 +53,6 @@ DEPENDENCIES
   jruby-openssl
   jruby-rack
   rails (= 2.3.8)
+  uuidtools
   warbler
   yaml_db

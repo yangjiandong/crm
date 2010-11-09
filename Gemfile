@@ -42,3 +42,4 @@ end
 # end
 
 gem 'yaml_db'
+gem 'uuidtools'
