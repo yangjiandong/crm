@@ -31,12 +31,12 @@ class CreateUsers < ActiveRecord::Migration
       t.datetime :deleted_at
       t.timestamps
     end     
-
-    add_index :users, [ :username, :deleted_at ], :unique => true
+    
+    add_index :users, [ :username, :deleted_at ], :unique => true , :name => 'by_user_delete_at'
     add_index :users, :email
     add_index :users, :last_request_at
     add_index :users, :remember_token
-    add_index :users, :perishable_token
+    add_index :users, :perishable_token, :name => 'by_perishable'
   end
 
   def self.down
