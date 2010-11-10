@@ -1,12 +1,17 @@
 TODO
 ======
 
-   1. jruby-rack 暂时用1.0.1, 1.0.3 有bug,jetty下不能显示,首页为浏览目录.
+ok   1. jruby-rack 暂时用1.0.1, 1.0.3 有bug,jetty下不能显示,首页为浏览目录.
 
-      mysql jdbc 只能用5.0.4, 采用5.1.13 报
+
+ok   2. mysql jdbc 只能用5.0.4, 采用5.1.13 报
       ActiveRecord::JDBCError: Generated keys not requested. You need to
       specify Statement.RETURN_GENERATED_KEYS to Statement.executeUpdate()
       or Connection.prepareStatement().: SET SQL_AUTO_IS_NULL=0
+
+
+   3. jndi or other jdbc
+
 
 
    --END
