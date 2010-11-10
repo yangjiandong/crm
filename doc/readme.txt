@@ -21,9 +21,10 @@ fat_free_crm
      bin/eclipse.bat
 
    4. 生成演示数据
-   --branch 2.3.8,
-   --有可能要bundle unlock,bundle install,bundle lock
-   jruby -S rake db:dump
+   --yaml_db 在rails2.3 中有点问题,具体看jrails/doc/readme.txt
+
+   拷贝yaml_db到lib下
+   rake db:dump --> db/data.yml
 
 2010.11.08
 -----------
