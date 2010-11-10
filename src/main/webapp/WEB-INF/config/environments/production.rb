@@ -4,6 +4,10 @@
 # Code is not reloaded between requests
 config.cache_classes = true
 
+# Enable threaded mode
+# 参考sonar
+config.threadsafe!
+
 # Full error reports are disabled and caching is turned on
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
@@ -24,5 +28,8 @@ config.action_view.cache_template_loading            = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-# Enable threaded mode
-# config.threadsafe!
+config.load_paths += %W( #{RAILS_ROOT}/lib )
+
+# 参考sonar
+config.logger = Slf4jLogger.new
+ActiveRecord::Base.logger = config.logger

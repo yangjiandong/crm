@@ -12,6 +12,6 @@
         username="root"
         password=""
         driverClassName="com.mysql.jdbc.Driver"
-        url="jdbc:mysql://127.0.0.1:3306/fat_free_crm_development?autoReconnect=true"
+        url="jdbc:mysql://127.0.0.1:3306/fat_free_crm_development?autoReconnect=true&useUnicode=true&characterEncoding=utf8"
         />
 </Context>

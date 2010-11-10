@@ -5,8 +5,20 @@ fat_free_crm
 ----------
 
    1. jruby-rack 暂时用1.0.1, 1.0.3 有bug,jetty下不能显示,首页为浏览目录.
+      mysql jdbc 只能用5.0.4, 采用5.1.13 报
+      ActiveRecord::JDBCError: Generated keys not requested. You need to
+      specify Statement.RETURN_GENERATED_KEYS to Statement.executeUpdate()
+      or Connection.prepareStatement().: SET SQL_AUTO_IS_NULL=0
 
    2. webapp/WEB-INF/gems 不加入版本
+
+   3、手工建立eclipse项目
+
+   a、建立m2_home变量
+     mvn -Declipse.workspace=<path-to-eclipse-workspace> eclipse:add-maven-repo
+   b、生成eclipse项目
+     mvn eclipse:eclipse
+     bin/eclipse.bat
 
 2010.11.08
 -----------
