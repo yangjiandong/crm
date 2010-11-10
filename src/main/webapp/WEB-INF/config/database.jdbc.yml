@@ -16,6 +16,16 @@
 #   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
 #------------------------------------------------------------------------------
 development:
+  adapter: jdbcmssql
+  database: crm
+  driver: net.sourceforge.jtds.jdbc.Driver
+  url: jdbc:jtds:sqlserver://192.168.1.148:1433/crm
+  username: sa
+  password: 123
+  hostname: 192.168.1.148
+  port: 1433
+
+development:
   # adapter: jdbcsqlite3
   # encoding: utf8
   # database: db/development.sqlite3

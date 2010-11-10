@@ -20,6 +20,11 @@ fat_free_crm
      mvn eclipse:eclipse
      bin/eclipse.bat
 
+   4. 生成演示数据
+   --branch 2.3.8,
+   --有可能要bundle unlock,bundle install,bundle lock
+   jruby -S rake db:dump
+
 2010.11.08
 -----------
 
