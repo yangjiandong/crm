@@ -30,16 +30,16 @@ development:
   # username: crm
   # password: crm
 
-  #adapter: jdbcmysql
-  #encoding: utf8
-  #database: fat_free_crm_development
-  #pool: 5
-  #username: root
-  #password:
+  adapter: jdbcmysql
+  encoding: utf8
+  database: fat_free_crm_development
+  pool: 5
+  username: root
+  password:
   # socket: /tmp/mysql.sock
 
-  adapter: jdbc
-  jndi: java:comp/env/jdbc/database
+  #adapter: jdbc
+  #jndi: java:comp/env/jdbc/database
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

@@ -11,27 +11,12 @@
   <name>Sill :: CRM</name>
 
   <dependencies>
+    <!--
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <scope>test</scope>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
     </dependency>
-    <dependency>
-      <groupId>commons-configuration</groupId>
-      <artifactId>commons-configuration</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbynet</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-    </dependency>
+    -->
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
@@ -63,20 +48,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jfree</groupId>
-      <artifactId>jfreechart</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>janino</groupId>
-      <artifactId>janino</artifactId>
-    </dependency>
-    <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>classworlds</groupId>
-      <artifactId>classworlds</artifactId>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -85,6 +58,7 @@
     <dependency>
       <groupId>org.jruby.rack</groupId>
       <artifactId>jruby-rack</artifactId>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
       <!-- GZIP filter -->
@@ -96,136 +70,13 @@
   </dependencies>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
 
     <plugins>
-      <plugin>
-        <artifactId>maven-clean-plugin</artifactId>
-        <configuration>
-          <filesets>
-            <fileset>
-              <directory>${basedir}/src/main/webapp/deploy</directory>
-              <includes>
-                <include>gwt/**/*</include>
-                <include>maven/**/*</include>
-                <include>jdbc-driver.jar</include>
-                <include>plugins/**/*</include>
-              </includes>
-              <excludes>
-                <exclude>maven/README.txt</exclude>
-                <exclude>maven/index.html</exclude>
-                <exclude>**/.svn/**/*</exclude>
-              </excludes>
-            </fileset>
-          </filesets>
-        </configuration>
-      </plugin>
-      <plugin>
-        <!-- 拷贝sill-colorizer 的 sonar-colorizer.css 文件 -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <!-- 拷贝webapp 到target/xx/ -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/${project.build.finalName}/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/src/main/webapp</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- 压缩所需js，合成为 sonar.js -->
-      <!--
-      <plugin>
-
-        <groupId>net.sf.alchim</groupId>
-        <artifactId>yuicompressor-maven-plugin</artifactId>
-        <version>0.7.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <nosuffix>false</nosuffix>
-          <failOnWarning>false</failOnWarning>
-          <jswarn>false</jswarn>
-          <sourceDirectory>src/main/webapp/javascripts</sourceDirectory>
-          <outputDirectory>${project.build.directory}/${project.build.finalName}/javascripts</outputDirectory>
-          <aggregations>
-            <aggregation>
-              <includes>
-                <include>**/yahoo-dom-event-min.js</include>
-                <include>**/calendar-min.js</include>
-                <include>**/application-min.js</include>
-                <include>**/prototype-min.js</include>
-                <include>**/scriptaculous-min.js</include>
-                <include>**/tablekit-min.js</include>
-                <include>**/prototip-min.js</include>
-                <include>**/tooltip-min.js</include>
-              </includes>
-              <output>${project.build.directory}/${project.build.finalName}/javascripts/sonar.js</output>
-            </aggregation>
-            <aggregation>
-              <includes>
-                <include>**/yui-2.6.0-min.css</include>
-                <include>**/calendar-min.css</include>
-                <include>**/style-min.css</include>
-                <include>**/sonar-colorizer-min.css</include>
-              </includes>
-              <output>${project.build.directory}/${project.build.finalName}/stylesheets/sonar.css</output>
-            </aggregation>
-          </aggregations>
-          <excludes>
-            <exclude>**/gems/**/*.js</exclude>
-            <exclude>**/gems/**/*.css</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      -->
-
+      <!-- war插件-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>2.1-beta-1</version>
         <configuration>
-          <packagingExcludes>
-            **/*.log,*.iml,WEB-INF/script/,WEB-INF/test/
-          </packagingExcludes>
-          <warSourceExcludes>
-            **/*
-          </warSourceExcludes>
           <archive>
             <manifestEntries>
               <version>${project.version}</version>
@@ -233,12 +84,94 @@
           </archive>
         </configuration>
       </plugin>
+
+      <!-- compiler插件, 设定JDK版本 -->
       <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <skip>true</skip>
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>false</showDeprecation>
+          <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
+      <!-- 拷贝webapp 到target/xx/ -->
+      <!--
+        <plugin>
+
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/${project.build.finalName}/</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>${basedir}/src/main/webapp</directory>
+                                <filtering>false</filtering>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        -->
+      <!-- 压缩所需js，合成为 sonar.js -->
+      <!--
+        <plugin>
+
+          <groupId>net.sf.alchim</groupId>
+          <artifactId>yuicompressor-maven-plugin</artifactId>
+          <version>0.7.1</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compress</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <nosuffix>false</nosuffix>
+            <failOnWarning>false</failOnWarning>
+            <jswarn>false</jswarn>
+            <sourceDirectory>src/main/webapp/javascripts</sourceDirectory>
+            <outputDirectory>${project.build.directory}/${project.build.finalName}/javascripts</outputDirectory>
+            <aggregations>
+              <aggregation>
+                <includes>
+                  <include>**/yahoo-dom-event-min.js</include>
+                  <include>**/calendar-min.js</include>
+                  <include>**/application-min.js</include>
+                  <include>**/prototype-min.js</include>
+                  <include>**/scriptaculous-min.js</include>
+                  <include>**/tablekit-min.js</include>
+                  <include>**/prototip-min.js</include>
+                  <include>**/tooltip-min.js</include>
+                </includes>
+                <output>${project.build.directory}/${project.build.finalName}/javascripts/sonar.js</output>
+              </aggregation>
+              <aggregation>
+                <includes>
+                  <include>**/yui-2.6.0-min.css</include>
+                  <include>**/calendar-min.css</include>
+                  <include>**/style-min.css</include>
+                  <include>**/sonar-colorizer-min.css</include>
+                </includes>
+                <output>${project.build.directory}/${project.build.finalName}/stylesheets/sonar.css</output>
+              </aggregation>
+            </aggregations>
+            <excludes>
+              <exclude>**/gems/**/*.js</exclude>
+              <exclude>**/gems/**/*.css</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+        -->
 
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
@@ -265,6 +198,28 @@
               <value>${project.build.directory}/sonar-dev-home</value>
             </systemProperty>
           </systemProperties>
+        </configuration>
+      </plugin>
+
+      <!-- test插件,加大内存 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-Xmx128M</argLine>
+          <useSystemClassLoader>false</useSystemClassLoader>
+        </configuration>
+      </plugin>
+
+      <!-- eclipse插件 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <wtpversion>2.0</wtpversion>
+          <additionalProjectnatures>
+            <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+          </additionalProjectnatures>
         </configuration>
       </plugin>
 

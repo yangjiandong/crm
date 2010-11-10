@@ -1,6 +1,13 @@
 fat_free_crm
 ==============
 
+2010.11.09
+----------
+
+   1. jruby-rack 暂时用1.0.1, 1.0.3 有bug,jetty下不能显示,首页为浏览目录.
+
+   2. webapp/WEB-INF/gems 不加入版本
+
 2010.11.08
 -----------
 
@@ -10,11 +17,6 @@ fat_free_crm
    2. 建立branch mvn.ror.2.3.8
    git branch mvn.ror.2.3.8
    git push origin mvn.ror.2.3.8
-
-   3. 建立sill-1.0
-
-   cd parent
-   mvn install
 
 2010.11.05
 -----------
