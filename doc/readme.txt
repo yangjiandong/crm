@@ -1,6 +1,30 @@
 fat_free_crm
 ==============
 
+2010.11.10
+----------
+
+   1. log
+
+      logback.xml
+  <root>
+    <level value="ERROR"/>
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+      --rails 采用logback
+      --development.rb
+      config.logger = Slf4jLogger.new
+      ActiveRecord::Base.logger = config.logger
+
+      --web.xml,不知有什么作用
+    <env-entry>
+        <description>JNDI logback context</description>
+        <env-entry-name>logback/context-name</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>dev</env-entry-value>
+    </env-entry>
+
 2010.11.09
 ----------
 
@@ -25,6 +49,9 @@ fat_free_crm
 
    拷贝yaml_db到lib下
    rake db:dump --> db/data.yml
+
+   --load data
+   rake db:data:load <-- db/data.yml
 
 2010.11.08
 -----------

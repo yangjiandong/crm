@@ -21,3 +21,6 @@ begin
   require 'ap'
 rescue LoadError
 end
+
+#config.logger = Slf4jLogger.new
+#ActiveRecord::Base.logger = config.logger

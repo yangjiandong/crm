@@ -30,7 +30,7 @@
         <description>JNDI logback context</description>
         <env-entry-name>logback/context-name</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>Sonar</env-entry-value>
+        <env-entry-value>dev</env-entry-value>
     </env-entry>
 
     <filter>
